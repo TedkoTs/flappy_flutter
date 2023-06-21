@@ -23,6 +23,7 @@ class _GameViewState extends State<GameView> {
 
   static double barrierOneX = 1.5;
   double barrierTwoX = barrierOneX + 1.5;
+  double barrierThreeX = barrierOneX + 3;
 
   bool hasGameStarted = false;
 
@@ -36,7 +37,8 @@ class _GameViewState extends State<GameView> {
 
       setState(() {
         if (barrierOneX < -1.5) {
-          barrierOneX += 3.3;
+          currentScore++;
+          barrierOneX += 4.5;
         } else {
           barrierOneX -= 0.05;
         }
@@ -44,15 +46,25 @@ class _GameViewState extends State<GameView> {
 
       setState(() {
         if (barrierTwoX < -1.5) {
-          barrierTwoX += 3.3;
+          currentScore++;
+          barrierTwoX += 4.5;
         } else {
           barrierTwoX -= 0.05;
         }
       });
 
+      setState(() {
+        if (barrierThreeX < -1.5) {
+          currentScore++;
+          barrierThreeX += 4.5;
+        } else {
+          barrierThreeX -= 0.05;
+        }
+      });
+
       time += 0.03;
 
-      if (isDead()) {
+      if (isDead() || hasCollided()) {
         timer.cancel();
         showMenu();
       }
@@ -67,22 +79,21 @@ class _GameViewState extends State<GameView> {
   }
 
   bool isDead() {
-    if (birdY < -1 || birdY > 1) {
+    if (birdY < -1.1 || birdY > 1.1) {
       return true;
     }
     return false;
   }
 
   void reset() {
-    Navigator.pop(context);
+    if (currentScore > bestScore) {
+      bestScore = currentScore;
+    }
+    initState();
     setState(() {
-      birdY = 0;
       hasGameStarted = false;
-      time = 0;
-      initialPosition = birdY;
-      barrierOneX = 1.5;
-      barrierTwoX = 3;
     });
+    Navigator.pop(context);
   }
 
   void showMenu() {
@@ -138,6 +149,42 @@ class _GameViewState extends State<GameView> {
     );
   }
 
+//doesn't work correctly
+  bool hasCollided() {
+    if (barrierOneX < 0.2 && barrierOneX > -0.2) {
+      if (birdY < -0.2 || birdY > 0.2) {
+        return true;
+      }
+    }
+    if (barrierTwoX < 0.2 && barrierTwoX > -0.2) {
+      if (birdY < -0.2 || birdY > 0.2) {
+        return true;
+      }
+    }
+    if (barrierThreeX < 0.2 && barrierThreeX > -0.2) {
+      if (birdY < -0.2 || birdY > 0.2) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    // super.initState();
+    setState(() {
+      birdY = 0;
+      time = 0;
+      height = 0;
+      initialPosition = birdY;
+      barrierOneX = 1.5;
+      barrierTwoX = 3;
+      barrierThreeX = 4.5;
+      hasGameStarted = false;
+      currentScore = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -168,12 +215,12 @@ class _GameViewState extends State<GameView> {
                       AnimatedContainer(
                         alignment: Alignment(barrierOneX, 1.1),
                         duration: const Duration(milliseconds: 0),
-                        child: const Barrier(height: 400),
+                        child: const Barrier(height: 200),
                       ),
                       AnimatedContainer(
                         alignment: Alignment(barrierOneX, -1.1),
                         duration: const Duration(milliseconds: 0),
-                        child: const Barrier(height: 100),
+                        child: const Barrier(height: 200),
                       ),
                       AnimatedContainer(
                         alignment: Alignment(barrierTwoX, 1.1),
@@ -183,7 +230,17 @@ class _GameViewState extends State<GameView> {
                       AnimatedContainer(
                         alignment: Alignment(barrierTwoX, -1.1),
                         duration: const Duration(milliseconds: 0),
-                        child: const Barrier(height: 100),
+                        child: const Barrier(height: 300),
+                      ),
+                      AnimatedContainer(
+                        alignment: Alignment(barrierThreeX, 1.1),
+                        duration: const Duration(milliseconds: 0),
+                        child: const Barrier(height: 400),
+                      ),
+                      AnimatedContainer(
+                        alignment: Alignment(barrierThreeX, -1.1),
+                        duration: const Duration(milliseconds: 0),
+                        child: const Barrier(height: 400),
                       ),
                     ],
                   ),
