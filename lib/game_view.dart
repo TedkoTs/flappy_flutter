@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flappy_flutter/barrier.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flappy_flutter/bird.dart';
@@ -16,8 +17,10 @@ class _GameViewState extends State<GameView> {
   double height = 0.0;
   double time = 0.0;
   double gravity = -4.9;
-  double velocity = 2.5;
+  double velocity = 3;
   bool hasGameStarted = false;
+  int currentScore = 0;
+  int bestScore = 0;
 
   void playGame() {
     hasGameStarted = true;
@@ -26,11 +29,11 @@ class _GameViewState extends State<GameView> {
       setState(() {
         birdY = initialPosition - height;
       });
-      time += 0.025;
+      time += 0.03;
 
       if (isDead()) {
         timer.cancel();
-        hasGameStarted = false;
+        showMenu();
       }
     });
   }
@@ -47,6 +50,55 @@ class _GameViewState extends State<GameView> {
       return true;
     }
     return false;
+  }
+
+  void reset() {
+    Navigator.pop(context);
+    setState(() {
+      birdY = 0;
+      hasGameStarted = false;
+      time = 0;
+      initialPosition = birdY;
+    });
+  }
+
+  void showMenu() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 118, 75, 60),
+          title: const Center(
+            child: Text(
+              'N I C E  T R Y',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: reset,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.white,
+                  child: const Text(
+                    'TRY AGAIN',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 77, 48, 38),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -66,14 +118,52 @@ class _GameViewState extends State<GameView> {
                       Bird(
                         birdY: birdY,
                       ),
+                      Container(
+                        alignment: const Alignment(0, -0.5),
+                        child: Text(
+                          hasGameStarted ? '' : 'T A P  T O  F L Y',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 25,
+                          ),
+                        ),
+                      ),
+                      AnimatedContainer(
+                        alignment: const Alignment(0, 1),
+                        duration: const Duration(milliseconds: 0),
+                        child: const Barrier(height: 200),
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
+            Container(
+              height: 10,
+              color: const Color.fromARGB(255, 123, 200, 41),
+            ),
             Expanded(
               child: Container(
-                color: const Color.fromARGB(255, 77, 48, 38),
+                color: const Color.fromARGB(255, 65, 73, 48),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      'Score: $currentScore',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    Text('High Score: $bestScore',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w400,
+                        )),
+                  ],
+                ),
               ),
             )
           ],

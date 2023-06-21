@@ -6,7 +6,8 @@ class Bird extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 30),
       alignment: Alignment(0, birdY),
       child: Image.asset(
         'lib/images/bird.png',
