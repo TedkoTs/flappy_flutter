@@ -1,16 +1,10 @@
 # flappy_flutter
 
-A new Flutter project.
+A test flutter project aimed at learning a bit of dart and flutter with a funny frustrating game. The idea is avoid using external packages like Flame, just as clean as possible.
 
-## Getting Started
+## WIP
 
-This project is a starting point for a Flutter application.
+Everything here is work in progress, I'll be adding the required logic step by step. 
+Currently it's only tested on android.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
