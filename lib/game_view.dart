@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flappy_flutter/barrier.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flappy_flutter/barrier.dart';
 import 'package:flappy_flutter/bird.dart';
 
 class GameView extends StatefulWidget {
@@ -18,9 +18,13 @@ class _GameViewState extends State<GameView> {
   double time = 0.0;
   double gravity = -4.9;
   double velocity = 3;
-  bool hasGameStarted = false;
   int currentScore = 0;
   int bestScore = 0;
+
+  static double barrierOneX = 1.5;
+  double barrierTwoX = barrierOneX + 1.5;
+
+  bool hasGameStarted = false;
 
   void playGame() {
     hasGameStarted = true;
@@ -29,6 +33,23 @@ class _GameViewState extends State<GameView> {
       setState(() {
         birdY = initialPosition - height;
       });
+
+      setState(() {
+        if (barrierOneX < -1.5) {
+          barrierOneX += 3.3;
+        } else {
+          barrierOneX -= 0.05;
+        }
+      });
+
+      setState(() {
+        if (barrierTwoX < -1.5) {
+          barrierTwoX += 3.3;
+        } else {
+          barrierTwoX -= 0.05;
+        }
+      });
+
       time += 0.03;
 
       if (isDead()) {
@@ -59,6 +80,8 @@ class _GameViewState extends State<GameView> {
       hasGameStarted = false;
       time = 0;
       initialPosition = birdY;
+      barrierOneX = 1.5;
+      barrierTwoX = 3;
     });
   }
 
@@ -69,29 +92,43 @@ class _GameViewState extends State<GameView> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color.fromARGB(255, 118, 75, 60),
-          title: const Center(
-            child: Text(
-              'N I C E  T R Y',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+          title: Center(
+            child: Column(
+              children: [
+                const Text(
+                  'N I C E  T R Y',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Score $currentScore',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           actions: [
-            GestureDetector(
-              onTap: reset,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white,
-                  child: const Text(
-                    'TRY AGAIN',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 77, 48, 38),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            ElevatedButton(
+              onPressed: reset,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+              ),
+              child: const Text(
+                'TRY AGAIN',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 77, 48, 38),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             )
@@ -129,9 +166,24 @@ class _GameViewState extends State<GameView> {
                         ),
                       ),
                       AnimatedContainer(
-                        alignment: const Alignment(0, 1),
+                        alignment: Alignment(barrierOneX, 1.1),
                         duration: const Duration(milliseconds: 0),
-                        child: const Barrier(height: 200),
+                        child: const Barrier(height: 400),
+                      ),
+                      AnimatedContainer(
+                        alignment: Alignment(barrierOneX, -1.1),
+                        duration: const Duration(milliseconds: 0),
+                        child: const Barrier(height: 100),
+                      ),
+                      AnimatedContainer(
+                        alignment: Alignment(barrierTwoX, 1.1),
+                        duration: const Duration(milliseconds: 0),
+                        child: const Barrier(height: 300),
+                      ),
+                      AnimatedContainer(
+                        alignment: Alignment(barrierTwoX, -1.1),
+                        duration: const Duration(milliseconds: 0),
+                        child: const Barrier(height: 100),
                       ),
                     ],
                   ),
